@@ -284,10 +284,9 @@ fun sin(x: Double, eps: Double): Double {
 fun cos(x: Double, eps: Double): Double {
     var result = 1.0
     var subX = x
-    while (abs(result) > 2 * PI) {
-        if (result > 0) result -= 2 * PI
-        else result += 2 * PI
-        subX = result
+    while (abs(subX) > 2 * PI) {
+        if (subX > 0) subX -= 2 * PI
+        else subX += 2 * PI
     }
     var sign = true
     var xn = subX.pow(2) / factorial(2) * (-1)
