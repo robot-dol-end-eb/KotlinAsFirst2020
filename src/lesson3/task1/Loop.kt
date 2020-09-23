@@ -75,7 +75,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 fun digitNumber(n: Int): Int {
     var count = 1
     var number = n
-    while (number / 10 > 0) {
+    while (abs(number) / 10 > 0) {
         count++
         number /= 10
     }
@@ -159,10 +159,13 @@ fun collatzSteps(x: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    for (k in min(n, m)..m * n) {
-        if (k % n == 0 && k % m == 0) return k
+    var a = m
+    var b = n
+    while (a != 0 && b != 0) {
+        if (a > b) a %= b
+        else b %= a
     }
-    return n * m
+    return n * m / (a + b)
 }
 
 /**
@@ -249,8 +252,9 @@ fun hasDifferentDigits(n: Int): Boolean {
 fun sin(x: Double, eps: Double): Double {
     var result = x
     var subX = x
-    while (result > 2 * PI) {
-        result -= 2 * PI
+    while (abs(result) > 2 * PI) {
+        if (result > 0) result -= 2 * PI
+        else result += 2 * PI
         subX = result
     }
     var sign = true
@@ -280,8 +284,10 @@ fun sin(x: Double, eps: Double): Double {
 fun cos(x: Double, eps: Double): Double {
     var result = 1.0
     var subX = x
-    while (subX > 2 * PI) {
-        subX -= 2 * PI
+    while (abs(result) > 2 * PI) {
+        if (result > 0) result -= 2 * PI
+        else result += 2 * PI
+        subX = result
     }
     var sign = true
     var xn = subX.pow(2) / factorial(2) * (-1)
