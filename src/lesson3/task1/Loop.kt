@@ -107,7 +107,7 @@ fun fib(n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    for (i in 2..n) {
+    for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
         if (n % i == 0) return i
     }
     return n
@@ -118,12 +118,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    for (i in n - 1 downTo 1) {
-        if (n % i == 0) return i
-    }
-    return 1
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая (2 балла)
@@ -220,7 +215,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 /**
  * Средняя (3 балла)
@@ -231,9 +226,10 @@ fun isPalindrome(n: Int): Boolean = TODO()
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    var number = n
-    while (number >= 10) {
-        if (number % 10 != (number / 10) % 10)
+    var subNumb1 = n % 10
+    var number = n / 10
+    while (number > 0) {
+        if (number % 10 != subNumb1)
             return true
         number /= 10
     }
@@ -250,13 +246,8 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var result = x
-    var subX = x
-    while (abs(result) > 2 * PI) {
-        if (result > 0) result -= 2 * PI
-        else result += 2 * PI
-        subX = result
-    }
+    var result = x % (2 * PI)
+    var subX = result
     var sign = true
     var xn = subX.pow(3) / factorial(3) * (-1)
     var coef = 5
@@ -283,11 +274,7 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     var result = 1.0
-    var subX = x
-    while (abs(subX) > 2 * PI) {
-        if (subX > 0) subX -= 2 * PI
-        else subX += 2 * PI
-    }
+    var subX = x % (2 * PI)
     var sign = true
     var xn = subX.pow(2) / factorial(2) * (-1)
     var coef = 4
