@@ -316,11 +316,11 @@ fun roman(n: Int): String {
             strResult += listStrVal[i]
             if (subNumb == 1) {
                 strResult += "I"
-                break
+                return strResult
             }
         }
         if (subNumb == 0)
-            break
+            return strResult
     }
     return strResult
 }
@@ -351,7 +351,7 @@ fun russian(n: Int): String {
         "семьдесят ",
         "шестьдесят ",
         "пятьдесят ",
-        "сокор ",
+        "сорок ",
         "тридцать ",
         "двадцать ",
         "десять ",
