@@ -346,7 +346,7 @@ fun russian(n: Int): String {
         ""
     )
     val listStrDozens = mutableListOf<String>(
-        "девяноста ",
+        "девяносто ",
         "восемьдесят ",
         "семьдесят ",
         "шестьдесят ",
