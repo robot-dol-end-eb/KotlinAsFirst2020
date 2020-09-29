@@ -4,6 +4,8 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
+import kotlin.math.pow
+import lesson3.task1.minDivisor
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -139,7 +141,13 @@ fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.sum() / list.
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    val mean = mean(list)
+    for (i in 0 until list.size) {
+        list[i] -= mean
+    }
+    return list
+}
 
 /**
  * Средняя (3 балла)
@@ -148,7 +156,13 @@ fun center(list: MutableList<Double>): MutableList<Double> = TODO()
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
-fun times(a: List<Int>, b: List<Int>): Int = a.sum() + b.sum()
+fun times(a: List<Int>, b: List<Int>): Int {
+    var result = 0
+    for (i in a.indices) {
+        result += a[i] * b[i]
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -158,7 +172,13 @@ fun times(a: List<Int>, b: List<Int>): Int = a.sum() + b.sum()
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
-fun polynom(p: List<Int>, x: Int): Int = TODO()
+fun polynom(p: List<Int>, x: Int): Int {
+    var result = 0
+    for (i in p.indices) {
+        result += p[i] * x.toDouble().pow(i).toInt()
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -170,7 +190,13 @@ fun polynom(p: List<Int>, x: Int): Int = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
+fun accumulate(list: MutableList<Int>): MutableList<Int> {
+    if (list.isEmpty()) return list
+    for (i in list.size - 1 downTo 0) {
+        list[i] = list.subList(0, i + 1).sum()
+    }
+    return list
+}
 
 /**
  * Средняя (3 балла)
@@ -179,7 +205,18 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    var list = mutableListOf<Int>()
+    var subNum = n
+    while (subNum > 10) {
+        val minDiv = minDivisor(subNum)
+        list.add(minDiv)
+        subNum /= minDiv
+    }
+    if (subNum != 1)
+        list.add(subNum)
+    return list
+}
 
 /**
  * Сложная (4 балла)
@@ -188,7 +225,7 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя (3 балла)
@@ -197,7 +234,16 @@ fun factorizeToString(n: Int): String = TODO()
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+fun convert(n: Int, base: Int): List<Int> {
+    val list = mutableListOf<Int>()
+    var subNum = n
+    while (subNum > 0) {
+        list.add(subNum % base)
+        subNum /= base
+    }
+    if (list.isEmpty()) list.add(0)
+    return list.reversed()
+}
 
 /**
  * Сложная (4 балла)
@@ -210,7 +256,15 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    val list = convert(n, base)
+    var result = ""
+    for (i in list.indices) {
+        result += if (list[i] > 9) 'a' + list[i] - 10
+        else list[i].toString()
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -219,7 +273,9 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int = digits.fold(0) { previousResult, element ->
+    previousResult * base + element
+}
 
 /**
  * Сложная (4 балла)
@@ -233,7 +289,13 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    val list = mutableListOf<Int>()
+    for (i in str.indices) {
+        list.add(if (str[i] - '0' in 0..9) (str[i] - '0') else str[i] - 'a' + 10)
+    }
+    return decimal(list, base)
+}
 
 /**
  * Сложная (5 баллов)
@@ -243,7 +305,25 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    var strResult = ""
+    var subNumb = n
+    val listCoef = listOf<Int>(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    val listStrVal = mutableListOf<String>("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
+    for (i in listCoef.indices) {
+        while (subNumb - listCoef[i] >= 0) {
+            subNumb -= listCoef[i]
+            strResult += listStrVal[i]
+            if (subNumb == 1) {
+                strResult += "I"
+                break
+            }
+        }
+        if (subNumb == 0)
+            break
+    }
+    return strResult
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -252,4 +332,97 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val listStrHundreds = mutableListOf<String>(
+        "девятьсот ",
+        "восемьсот ",
+        "семьсот ",
+        "шестьсот ",
+        "пятьсот ",
+        "четыресто ",
+        "триста ",
+        "двести ",
+        "сто ",
+        ""
+    )
+    val listStrDozens = mutableListOf<String>(
+        "девяноста ",
+        "восемьдесят ",
+        "семьдесят ",
+        "шестьдесят ",
+        "пятьдесят ",
+        "сокор ",
+        "тридцать ",
+        "двадцать ",
+        "десять ",
+        ""
+    )
+    val listStrUnits2 = mutableListOf<String>(
+        "девять тысяч ",
+        "восемь тысяч ",
+        "семь тысяч ",
+        "шесть тысяч ",
+        "пять тысяч ",
+        "четыри тысячи ",
+        "три тысячи ",
+        "две тысячи ",
+        "одна тысяча ",
+        ""
+    )
+    val listStrUnits1 = mutableListOf<String>(
+        "девять ",
+        "восемь ",
+        "семь ",
+        "шесть ",
+        "пять ",
+        "четыре ",
+        "три ",
+        "два ",
+        "один ",
+        ""
+    )
+    val listStrUnits3 = mutableListOf<String>(
+        "девятнадцать ",
+        "восемнадцать ",
+        "семнадцать ",
+        "шетнадцать ",
+        "пятнадцать ",
+        "четырнадцать ",
+        "тринадцать ",
+        "двенадцать ",
+        "одинадцать ",
+        "десять "
+    )
+    var step2 = 1
+    var subN = n
+    var str = ""
+    while (step2 <= 6) {
+        val i = subN / 10.0.pow(6 - step2).toInt() % 10.0.pow(step2 + 1).toInt()
+        when (step2) {
+            1 -> str += listStrHundreds[listStrHundreds.size - i - 1]
+            2 -> {
+                str += if (i == 1) {
+                    val subI = subN / 10.0.pow(6 - step2 - 1).toInt() % 10.0.pow(step2 + 1).toInt()
+                    step2++
+                    subN %= 10.0.pow(6 - step2).toInt()
+                    listStrUnits3[listStrUnits3.size - subI + 9] + "тысяч "
+                } else listStrDozens[listStrDozens.size - i - 1]
+            }
+            3 -> {
+                str += listStrUnits2[listStrUnits2.size - i - 1]
+                if (i == 0 && str.trim().isNotEmpty()) str += "тысяч "
+            }
+            4 -> str += listStrHundreds[listStrHundreds.size - i - 1]
+            5 -> str += if (i == 1) {
+                val subI = subN / 10.0.pow(6 - step2 - 1).toInt() % 10.0.pow(step2 + 1).toInt()
+                step2++
+                subN %= 10.0.pow(6 - step2).toInt()
+                listStrUnits3[listStrUnits3.size - subI + 9]
+            } else listStrDozens[listStrDozens.size - i - 1]
+            6 -> str += listStrUnits1[listStrDozens.size - i - 1]
+        }
+        subN %= 10.0.pow(6 - step2).toInt()
+        step2++
+    }
+    return str.trim()
+}
