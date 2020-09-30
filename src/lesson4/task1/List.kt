@@ -143,7 +143,7 @@ fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.sum() / list.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     val mean = mean(list)
-    for (i in 0 until list.size) {
+    for (i in list.indices) {
         list[i] -= mean
     }
     return list
@@ -192,8 +192,13 @@ fun polynom(p: List<Int>, x: Int): Int {
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
     if (list.isEmpty()) return list
+    var subN = 0
     for (i in list.size - 1 downTo 0) {
-        list[i] = list.subList(0, i + 1).sum()
+        for (j in 0..i) {
+            subN += list[j]
+        }
+        list[i] = subN
+        subN = 0
     }
     return list
 }
@@ -206,7 +211,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    var list = mutableListOf<Int>()
+    val list = mutableListOf<Int>()
     var subNum = n
     while (subNum > 10) {
         val minDiv = minDivisor(subNum)
@@ -258,12 +263,14 @@ fun convert(n: Int, base: Int): List<Int> {
  */
 fun convertToString(n: Int, base: Int): String {
     val list = convert(n, base)
-    var result = ""
-    for (i in list.indices) {
-        result += if (list[i] > 9) 'a' + list[i] - 10
-        else list[i].toString()
+    val builder = StringBuilder()
+    for (digit in list) {
+        builder.append(
+            if (digit > 9) 'a' + digit - 10
+            else digit.toString()
+        )
     }
-    return result
+    return builder.toString()
 }
 
 /**
@@ -291,8 +298,8 @@ fun decimal(digits: List<Int>, base: Int): Int = digits.fold(0) { previousResult
  */
 fun decimalFromString(str: String, base: Int): Int {
     val list = mutableListOf<Int>()
-    for (i in str.indices) {
-        list.add(if (str[i] - '0' in 0..9) (str[i] - '0') else str[i] - 'a' + 10)
+    for (digit in str) {
+        list.add(if (digit - '0' in 0..9) (digit - '0') else digit - 'a' + 10)
     }
     return decimal(list, base)
 }
@@ -333,7 +340,7 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    val listStrHundreds = mutableListOf<String>(
+    val listStrHundreds = listOf<String>(
         "девятьсот ",
         "восемьсот ",
         "семьсот ",
@@ -345,7 +352,7 @@ fun russian(n: Int): String {
         "сто ",
         ""
     )
-    val listStrDozens = mutableListOf<String>(
+    val listStrDozens = listOf<String>(
         "девяносто ",
         "восемьдесят ",
         "семьдесят ",
@@ -357,7 +364,7 @@ fun russian(n: Int): String {
         "десять ",
         ""
     )
-    val listStrUnits2 = mutableListOf<String>(
+    val listStrUnits2 = listOf<String>(
         "девять тысяч ",
         "восемь тысяч ",
         "семь тысяч ",
@@ -369,7 +376,7 @@ fun russian(n: Int): String {
         "одна тысяча ",
         ""
     )
-    val listStrUnits1 = mutableListOf<String>(
+    val listStrUnits1 = listOf<String>(
         "девять ",
         "восемь ",
         "семь ",
@@ -381,7 +388,7 @@ fun russian(n: Int): String {
         "один ",
         ""
     )
-    val listStrUnits3 = mutableListOf<String>(
+    val listStrUnits3 = listOf<String>(
         "девятнадцать ",
         "восемнадцать ",
         "семнадцать ",
