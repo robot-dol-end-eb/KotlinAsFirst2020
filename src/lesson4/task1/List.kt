@@ -317,10 +317,6 @@ fun roman(n: Int): String {
             while (subNumb - listCoef[i] >= 0) {
                 subNumb -= listCoef[i]
                 append(listStrVal[i])
-                if (subNumb == 1) {
-                    append("I")
-                    break
-                }
             }
             if (subNumb == 0)
                 break
