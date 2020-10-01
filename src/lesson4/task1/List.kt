@@ -6,6 +6,7 @@ import lesson1.task1.discriminant
 import kotlin.math.sqrt
 import kotlin.math.pow
 import lesson3.task1.minDivisor
+import java.lang.StringBuilder
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -193,12 +194,9 @@ fun polynom(p: List<Int>, x: Int): Int {
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
     if (list.isEmpty()) return list
     var subN = 0
-    for (i in list.size - 1 downTo 0) {
-        for (j in 0..i) {
-            subN += list[j]
-        }
+    for (i in list.indices) {
+        subN += list[i]
         list[i] = subN
-        subN = 0
     }
     return list
 }
@@ -261,16 +259,16 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
+
 fun convertToString(n: Int, base: Int): String {
     val list = convert(n, base)
-    val builder = StringBuilder()
-    for (digit in list) {
-        builder.append(
-            if (digit > 9) 'a' + digit - 10
-            else digit.toString()
-        )
+    return buildString {
+        for (digit in list)
+            append(
+                if (digit > 9) 'a' + digit - 10
+                else digit.toString()
+            )
     }
-    return builder.toString()
 }
 
 /**
@@ -296,13 +294,8 @@ fun decimal(digits: List<Int>, base: Int): Int = digits.fold(0) { previousResult
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
-fun decimalFromString(str: String, base: Int): Int {
-    val list = mutableListOf<Int>()
-    for (digit in str) {
-        list.add(if (digit - '0' in 0..9) (digit - '0') else digit - 'a' + 10)
-    }
-    return decimal(list, base)
-}
+fun decimalFromString(str: String, base: Int): Int =
+    decimal(str.map { if (it - '0' in 0..9) it - '0' else it - 'a' + 10 }, base)
 
 /**
  * Сложная (5 баллов)
@@ -313,23 +306,26 @@ fun decimalFromString(str: String, base: Int): Int {
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun roman(n: Int): String {
-    var strResult = ""
     var subNumb = n
     val listCoef = listOf<Int>(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
-    val listStrVal = mutableListOf<String>("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
-    for (i in listCoef.indices) {
-        while (subNumb - listCoef[i] >= 0) {
-            subNumb -= listCoef[i]
-            strResult += listStrVal[i]
-            if (subNumb == 1) {
-                strResult += "I"
-                return strResult
+    val listStrVal = listOf<String>(
+        "M", "CM", "D", "CD", "C", "XC", "L",
+        "XL", "X", "IX", "V", "IV", "I"
+    )
+    return buildString {
+        for (i in listCoef.indices) {
+            while (subNumb - listCoef[i] >= 0) {
+                subNumb -= listCoef[i]
+                append(listStrVal[i])
+                if (subNumb == 1) {
+                    append("I")
+                    break
+                }
             }
+            if (subNumb == 0)
+                break
         }
-        if (subNumb == 0)
-            return strResult
     }
-    return strResult
 }
 
 /**
@@ -400,36 +396,29 @@ fun russian(n: Int): String {
         "одиннадцать ",
         "десять "
     )
-    var step2 = 1
+    var step = 1
     var subN = n
-    var str = ""
-    while (step2 <= 6) {
-        val i = subN / 10.0.pow(6 - step2).toInt() % 10.0.pow(step2 + 1).toInt()
-        when (step2) {
-            1 -> str += listStrHundreds[listStrHundreds.size - i - 1]
-            2 -> {
-                str += if (i == 1) {
-                    val subI = subN / 10.0.pow(6 - step2 - 1).toInt() % 10.0.pow(step2 + 1).toInt()
-                    step2++
-                    subN %= 10.0.pow(6 - step2).toInt()
-                    listStrUnits3[listStrUnits3.size - subI + 9] + "тысяч "
-                } else listStrDozens[listStrDozens.size - i - 1]
-            }
+    var str = StringBuilder()
+    while (step <= 6) {
+        val i = subN / 10.0.pow(6 - step).toInt() % 10.0.pow(step + 1).toInt()
+        when (step) {
+            1 -> str.append(listStrHundreds[listStrHundreds.size - i - 1])
+            2, 5 -> if (i == 1) {
+                val subI = subN / 10.0.pow(6 - step - 1).toInt() % 10.0.pow(step + 1).toInt()
+                subN %= 10.0.pow(6 - step).toInt()
+                str.append(listStrUnits3[listStrUnits3.size - subI + 9])
+                if (step == 2) str.append("тысяч ")
+                step++
+            } else str.append(listStrDozens[listStrDozens.size - i - 1])
             3 -> {
-                str += listStrUnits2[listStrUnits2.size - i - 1]
-                if (i == 0 && str.trim().isNotEmpty()) str += "тысяч "
+                str.append(listStrUnits2[listStrUnits2.size - i - 1])
+                if (i == 0 && str.trim().isNotEmpty()) str.append("тысяч ")
             }
-            4 -> str += listStrHundreds[listStrHundreds.size - i - 1]
-            5 -> str += if (i == 1) {
-                val subI = subN / 10.0.pow(6 - step2 - 1).toInt() % 10.0.pow(step2 + 1).toInt()
-                step2++
-                subN %= 10.0.pow(6 - step2).toInt()
-                listStrUnits3[listStrUnits3.size - subI + 9]
-            } else listStrDozens[listStrDozens.size - i - 1]
-            6 -> str += listStrUnits1[listStrDozens.size - i - 1]
+            4 -> str.append(listStrHundreds[listStrHundreds.size - i - 1])
+            6 -> str.append(listStrUnits1[listStrDozens.size - i - 1])
         }
-        subN %= 10.0.pow(6 - step2).toInt()
-        step2++
+        subN %= 10.0.pow(6 - step).toInt()
+        step++
     }
-    return str.trim()
+    return str.toString().trim()
 }
