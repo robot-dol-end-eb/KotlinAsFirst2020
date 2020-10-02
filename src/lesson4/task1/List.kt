@@ -394,27 +394,27 @@ fun russian(n: Int): String {
     )
     var step = 1
     var subN = n
-    var str = StringBuilder()
-    while (step <= 6) {
-        val i = subN / 10.0.pow(6 - step).toInt() % 10.0.pow(step + 1).toInt()
-        when (step) {
-            1 -> str.append(listStrHundreds[listStrHundreds.size - i - 1])
-            2, 5 -> if (i == 1) {
-                val subI = subN / 10.0.pow(6 - step - 1).toInt() % 10.0.pow(step + 1).toInt()
-                subN %= 10.0.pow(6 - step).toInt()
-                str.append(listStrUnits3[listStrUnits3.size - subI + 9])
-                if (step == 2) str.append("тысяч ")
-                step++
-            } else str.append(listStrDozens[listStrDozens.size - i - 1])
-            3 -> {
-                str.append(listStrUnits2[listStrUnits2.size - i - 1])
-                if (i == 0 && str.trim().isNotEmpty()) str.append("тысяч ")
+    return buildString {
+        while (step <= 6) {
+            val i = subN / 10.0.pow(6 - step).toInt() % 10.0.pow(step + 1).toInt()
+            when (step) {
+                1 -> append(listStrHundreds[listStrHundreds.size - i - 1])
+                2, 5 -> if (i == 1) {
+                    val subI = subN / 10.0.pow(6 - step - 1).toInt() % 10.0.pow(step + 1).toInt()
+                    subN %= 10.0.pow(6 - step).toInt()
+                    append(listStrUnits3[listStrUnits3.size - subI + 9])
+                    if (step == 2) append("тысяч ")
+                    step++
+                } else append(listStrDozens[listStrDozens.size - i - 1])
+                3 -> {
+                    append(listStrUnits2[listStrUnits2.size - i - 1])
+                    if (i == 0 && this.trim().isNotEmpty()) append("тысяч ")
+                }
+                4 -> append(listStrHundreds[listStrHundreds.size - i - 1])
+                6 -> append(listStrUnits1[listStrDozens.size - i - 1])
             }
-            4 -> str.append(listStrHundreds[listStrHundreds.size - i - 1])
-            6 -> str.append(listStrUnits1[listStrDozens.size - i - 1])
+            subN %= 10.0.pow(6 - step).toInt()
+            step++
         }
-        subN %= 10.0.pow(6 - step).toInt()
-        step++
-    }
-    return str.toString().trim()
+    }.trim()
 }
