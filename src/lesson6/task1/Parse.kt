@@ -94,7 +94,7 @@ fun dateStrToDigit(str: String): String {
     )
     try {
         val subStr = str.split(" ")
-        if (subStr.size != 3 && subStr[1] !in months && subStr[2].toInt() < 0) return ""
+        if ((subStr.size != 3) || (subStr[1] !in months) || (subStr[2].toInt() < 0)) return ""
         val numbMonth = months[subStr[1]] ?: error("")
         if (subStr[0].toInt() !in 1..daysInMonth(numbMonth, subStr[2].toInt())) return ""
         return String.format("%02d.%02d.%d", subStr[0].toInt(), numbMonth, subStr[2].toInt())
@@ -131,10 +131,9 @@ fun dateDigitToStr(digital: String): String {
         "декабря"
     )
     try {
-        if (subStr.size != 3) return ""
-        if (subStr[1].toInt() !in 1..12) return ""
-        if (subStr[2].toInt() < 0) return ""
-        if (subStr[0].toInt() !in 1..daysInMonth(subStr[1].toInt(), subStr[2].toInt())) return ""
+        if (subStr[1].toInt() !in 1..12 || subStr[2].toInt() < 0 || subStr.size != 3 ||
+            subStr[0].toInt() !in 1..daysInMonth(subStr[1].toInt(), subStr[2].toInt())
+        ) return ""
         return String.format("%d %s %d", subStr[0].toInt(), months[subStr[1].toInt() - 1], subStr[2].toInt())
     } catch (e: NumberFormatException) {
         return ""
@@ -173,6 +172,7 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int = TODO()
+
 /**
  * Сложная (6 баллов)
  *
