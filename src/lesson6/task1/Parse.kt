@@ -115,7 +115,6 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    val subStr = digital.split(".")
     val months = listOf(
         "января",
         "февраля",
@@ -131,9 +130,9 @@ fun dateDigitToStr(digital: String): String {
         "декабря"
     )
     try {
-        if (subStr[1].toInt() !in 1..12 || subStr[2].toInt() < 0 || subStr.size != 3 ||
-            subStr[0].toInt() !in 1..daysInMonth(subStr[1].toInt(), subStr[2].toInt())
-        ) return ""
+        val subStr = digital.split(".")
+        if (subStr.size != 3 || subStr[1].toInt() !in 1..12 || subStr[2].toInt() < 0) return ""
+        if (subStr[0].toInt() !in 1..daysInMonth(subStr[1].toInt(), subStr[2].toInt())) return ""
         return String.format("%d %s %d", subStr[0].toInt(), months[subStr[1].toInt() - 1], subStr[2].toInt())
     } catch (e: NumberFormatException) {
         return ""
