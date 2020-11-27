@@ -76,33 +76,33 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-//import lesson2.task2.daysInMonth
+val months = listOf(
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря"
+)
 fun dateStrToDigit(str: String): String {
-    val months = mapOf(
-        "января" to 1,
-        "февраля" to 2,
-        "марта" to 3,
-        "апреля" to 4,
-        "мая" to 5,
-        "июня" to 6,
-        "июля" to 7,
-        "августа" to 8,
-        "сентября" to 9,
-        "октября" to 10,
-        "ноября" to 11,
-        "декабря" to 12,
-    )
+    val subStr = str.split(" ")
     try {
-        val subStr = str.split(" ")
-        if ((subStr.size != 3) || (subStr[1] !in months) || (subStr[2].toInt() < 0)) return ""
-        val numbMonth = months[subStr[1]] ?: error("")
-        if (subStr[0].toInt() !in 1..daysInMonth(numbMonth, subStr[2].toInt())) return ""
-        return String.format("%02d.%02d.%d", subStr[0].toInt(), numbMonth, subStr[2].toInt())
-    } catch (e: NumberFormatException) {
+        val day = subStr[0].toInt()
+        val month = months.indexOf(subStr[1]) + 1
+        val year = subStr[2].toInt()
+        if (year > 0 && month in 1..12 && day in 1..daysInMonth(month, year))
+            return String.format("%02d.%02d.%d", day, month, year)
+    } catch (e: Exception) {
         return ""
     }
+    return ""
 }
-
 
 /**
  * Средняя (4 балла)
@@ -115,28 +115,18 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    val months = listOf(
-        "января",
-        "февраля",
-        "марта",
-        "апреля",
-        "мая",
-        "июня",
-        "июля",
-        "августа",
-        "сентября",
-        "октября",
-        "ноября",
-        "декабря"
-    )
+    val subStr = digital.split(".")
+    if (subStr.size != 3) return ""
     try {
-        val subStr = digital.split(".")
-        if (subStr.size != 3 || subStr[1].toInt() !in 1..12 || subStr[2].toInt() < 0) return ""
-        if (subStr[0].toInt() !in 1..daysInMonth(subStr[1].toInt(), subStr[2].toInt())) return ""
-        return String.format("%d %s %d", subStr[0].toInt(), months[subStr[1].toInt() - 1], subStr[2].toInt())
-    } catch (e: NumberFormatException) {
+        val day = subStr[0].toInt()
+        val month = subStr[1].toInt()
+        val year = subStr[2].toInt()
+        if (year > 0 && month in 1..12 && day in 1..daysInMonth(month, year))
+            return String.format("$day ${months[month - 1]} $year")
+    } catch (e: Exception) {
         return ""
     }
+    return ""
 }
 
 /**

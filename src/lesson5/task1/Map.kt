@@ -147,7 +147,10 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().filter { it in b.toSet() }
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
+    val subB = b.toSet()
+    return a.toSet().filter { it in subB }
+}
 
 /**
  * Средняя (3 балла)
@@ -167,8 +170,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().fil
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    val res = mutableMapOf<String, String>()
-    res.putAll(mapA)
+    var res = mapA.toMutableMap()
     for ((key, value) in mapB) {
         if (key !in res) res[key] = value
         else if (value != res[key]) res[key] += ", $value"
@@ -186,13 +188,7 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    val subMap = mutableMapOf<String, MutableList<Double>>()
-    val res = mutableMapOf<String, Double>()
-    for ((stock, cost) in stockPrices) subMap.getOrPut(stock) { mutableListOf() }.add(cost)
-    for ((stock, cost) in subMap) res[stock] = cost.sum() / cost.size
-    return res
-}
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
 
 /**
  * Средняя (4 балла)
@@ -209,17 +205,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    var min = Double.MAX_VALUE
-    var res: String? = null
-    for ((name, pair) in stuff) {
-        if (kind == pair.first && pair.second < min) {
-            min = pair.second
-            res = name
-        }
-    }
-    return res
-}
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? = TODO()
 
 /**
  * Средняя (3 балла)
