@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import kotlin.time.seconds
+
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -170,7 +172,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    var res = mapA.toMutableMap()
+    val res = mapA.toMutableMap()
     for ((key, value) in mapB) {
         if (key !in res) res[key] = value
         else if (value != res[key]) res[key] += ", $value"
@@ -188,7 +190,12 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
+    val res = mutableMapOf<String, Double>()
+    for ((stock, cost) in stockPrices) res[stock] = (res[stock] ?: 0.0) + cost
+    for ((stock, cost) in res) res[stock] = res[stock]!! / stockPrices.count { it.first == stock }
+    return res;
+}
 
 /**
  * Средняя (4 балла)
@@ -205,7 +212,8 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? = TODO()
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? =
+    stuff.filter { it.value.first == kind }.minByOrNull { it.value.second }?.key
 
 /**
  * Средняя (3 балла)

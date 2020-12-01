@@ -76,31 +76,26 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
+
 val months = listOf(
-    "января",
-    "февраля",
-    "марта",
-    "апреля",
-    "мая",
-    "июня",
-    "июля",
-    "августа",
-    "сентября",
-    "октября",
-    "ноября",
-    "декабря"
+    "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа",
+    "сентября", "октября", "ноября", "декабря"
 )
+
 fun dateStrToDigit(str: String): String {
     val subStr = str.split(" ")
+    val day: Int
+    val month: Int
+    val year: Int
     try {
-        val day = subStr[0].toInt()
-        val month = months.indexOf(subStr[1]) + 1
-        val year = subStr[2].toInt()
-        if (year > 0 && month in 1..12 && day in 1..daysInMonth(month, year))
-            return String.format("%02d.%02d.%d", day, month, year)
+        day = subStr[0].toInt()
+        month = months.indexOf(subStr[1]) + 1
+        year = subStr[2].toInt()
     } catch (e: Exception) {
         return ""
     }
+    if (year > 0 && month in 1..12 && day in 1..daysInMonth(month, year))
+        return String.format("%02d.%02d.%d", day, month, year)
     return ""
 }
 
@@ -117,15 +112,18 @@ fun dateStrToDigit(str: String): String {
 fun dateDigitToStr(digital: String): String {
     val subStr = digital.split(".")
     if (subStr.size != 3) return ""
+    val day: Int
+    val month: Int
+    val year: Int
     try {
-        val day = subStr[0].toInt()
-        val month = subStr[1].toInt()
-        val year = subStr[2].toInt()
-        if (year > 0 && month in 1..12 && day in 1..daysInMonth(month, year))
-            return String.format("$day ${months[month - 1]} $year")
+        day = subStr[0].toInt()
+        month = subStr[1].toInt()
+        year = subStr[2].toInt()
     } catch (e: Exception) {
         return ""
     }
+    if (year > 0 && month in 1..12 && day in 1..daysInMonth(month, year))
+        return String.format("$day ${months[month - 1]} $year")
     return ""
 }
 
