@@ -66,12 +66,12 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun deleteMarked(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) if (line.isEmpty()) {
-        //writer.newLine()
-        // writer.newLine()
-        writer.write("\n\n")
+        writer.newLine()
     } else
-        if (line[0] != '_')
+        if (line[0] != '_') {
             writer.write(line)
+            writer.newLine()
+        }
     writer.close()
 }
 
@@ -86,8 +86,9 @@ fun deleteMarked(inputName: String, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val res = mutableMapOf<String, Int>()
+    val subSubstring = substrings.toSet()
     for (line in File(inputName).readLines()) {
-        for (findWord in substrings) {
+        for (findWord in subSubstring) {
             if (res[findWord] == null) res[findWord] = 0
             var subIndex = line.indexOf(findWord, 0, true)
             while (subIndex != -1) {
@@ -167,7 +168,7 @@ fun centerFile(inputName: String, outputName: String) {
 fun alignFileByWidth(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     val subTextFile = mutableListOf<String>()
-    for (text in File(inputName).readLines()) subTextFile.add(text.trim())
+    for (text in File(inputName).readLines()) subTextFile.add(text.trim().replace(Regex("""\s+"""), " "))
     val maxLong = (subTextFile.maxByOrNull { it.length }?.length ?: 0)
     if (maxLong != 0) {
         for (line in subTextFile) {
