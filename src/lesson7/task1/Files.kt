@@ -68,7 +68,7 @@ fun deleteMarked(inputName: String, outputName: String) {
     for (line in File(inputName).readLines()) if (line.isEmpty()) {
         writer.newLine()
     } else
-        if (line[0] != '_') {
+        if (!line.startsWith('_')) {
             writer.write(line)
             writer.newLine()
         }
@@ -87,9 +87,9 @@ fun deleteMarked(inputName: String, outputName: String) {
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val res = mutableMapOf<String, Int>()
     val subSubstring = substrings.toSet()
-    for (line in File(inputName).readLines()) {
-        for (findWord in subSubstring) {
-            if (res[findWord] == null) res[findWord] = 0
+    for (findWord in subSubstring) {
+        if (res[findWord] == null) res[findWord] = 0
+        for (line in File(inputName).readLines()) {
             var subIndex = line.indexOf(findWord, 0, true)
             while (subIndex != -1) {
                 res[findWord] = res[findWord]!! + 1
