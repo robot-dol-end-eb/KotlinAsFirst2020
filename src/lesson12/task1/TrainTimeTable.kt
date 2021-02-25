@@ -16,6 +16,9 @@ package lesson12.task1
  * В конструктор передаётся название станции отправления для данного расписания.
  */
 class TrainTimeTable(val baseStationName: String) {
+
+    val way: MutableList<Train> = mutableListOf()// список поездов на пути
+
     /**
      * Добавить новый поезд.
      *
@@ -26,7 +29,12 @@ class TrainTimeTable(val baseStationName: String) {
      * @param destination конечная станция
      * @return true, если поезд успешно добавлен, false, если такой поезд уже есть
      */
-    fun addTrain(train: String, depart: Time, destination: Stop): Boolean = TODO()
+    fun addTrain(train: String, depart: Time, destination: Stop): Boolean {
+        //if ((way.firstOrNull { it.name == train }) != null) return false
+        if (way.find { it.name == train } != null) return false
+        way.add(Train(train, Stop(baseStationName, depart), destination))
+        return true
+    }
 
     /**
      * Удалить существующий поезд.
@@ -36,7 +44,11 @@ class TrainTimeTable(val baseStationName: String) {
      * @param train название поезда
      * @return true, если поезд успешно удалён, false, если такой поезд не существует
      */
-    fun removeTrain(train: String): Boolean = TODO()
+    fun removeTrain(train: String): Boolean {
+        if (way.removeIf { it.name == train })
+            return true
+        return false
+    }
 
     /**
      * Добавить/изменить начальную, промежуточную или конечную остановку поезду.
@@ -56,7 +68,32 @@ class TrainTimeTable(val baseStationName: String) {
      * @param stop начальная, промежуточная или конечная станция
      * @return true, если поезду была добавлена новая остановка, false, если было изменено время остановки на старой
      */
-    fun addStop(train: String, stop: Stop): Boolean = TODO()
+    fun addStop(train: String, stop: Stop): Boolean {
+        val indexTrain = way.indexOfFirst { it.name == train }
+        if (way[indexTrain].stops[0].name == stop.name) {
+            if (way[indexTrain].stops[1].time < stop.time) throw IllegalArgumentException()
+            way[indexTrain] =
+                Train(train, (way[indexTrain].stops.filter { it.name != stop.name } + stop).sortedBy { it.time })
+            return false
+        }
+        if (way[indexTrain].stops.last().name == stop.name) {
+            if (way[indexTrain].stops[way[indexTrain].stops.size - 2].time > stop.time) throw IllegalArgumentException()
+            way[indexTrain] =
+                Train(train, (way[indexTrain].stops.filter { it.name != stop.name } + stop).sortedBy { it.time })
+            return false
+        }
+        if (way[indexTrain].stops.find { it.time == stop.time } != null ||
+            stop.time <= way[indexTrain].stops[0].time ||
+            stop.time >= way[indexTrain].stops.last().time
+        ) throw IllegalArgumentException()
+        if (way[indexTrain].stops.find { it.name == stop.name } == null) {
+            way[indexTrain] = Train(train, (way[indexTrain].stops + stop).sortedBy { it.time })
+            return true
+        }
+        way[indexTrain] =
+            Train(train, (way[indexTrain].stops.filter { it.name != stop.name } + stop).sortedBy { it.time })
+        return false
+    }
 
     /**
      * Удалить одну из промежуточных остановок.
@@ -68,26 +105,39 @@ class TrainTimeTable(val baseStationName: String) {
      * @param stopName название промежуточной остановки
      * @return true, если удаление успешно
      */
-    fun removeStop(train: String, stopName: String): Boolean = TODO()
+    fun removeStop(train: String, stopName: String): Boolean {
+        val indexTrain = way.indexOfFirst { it.name == train }
+        if (way[indexTrain].stops.find { it.name == stopName } == null ||
+            stopName == baseStationName || stopName == way[indexTrain].stops.last().name) return false
+        way[indexTrain] = Train(train, (way[indexTrain].stops.filter { it.name != stopName }))
+        return true
+    }
 
     /**
      * Вернуть список всех поездов, упорядоченный по времени отправления с baseStationName
      */
-    fun trains(): List<Train> = TODO()
+    fun trains(): List<Train> = way.sortedBy { it.stops[0].time }
 
     /**
      * Вернуть список всех поездов, отправляющихся не ранее currentTime
      * и имеющих остановку (начальную, промежуточную или конечную) на станции destinationName.
      * Список должен быть упорядочен по времени прибытия на станцию destinationName
      */
-    fun trains(currentTime: Time, destinationName: String): List<Train> = TODO()
+    fun trains(currentTime: Time, destinationName: String): List<Train> {
+        val subList = way.filter {
+            it.stops[0].time >= currentTime &&
+                    it.stops.any { it.name == destinationName }
+        }
+        return subList.sortedBy { it.stops.first { it.name == destinationName }.time }
+    }
 
     /**
      * Сравнение на равенство.
      * Расписания считаются одинаковыми, если содержат одинаковый набор поездов,
      * и поезда с тем же именем останавливаются на одинаковых станциях в одинаковое время.
      */
-    override fun equals(other: Any?): Boolean = TODO()
+    override fun equals(other: Any?): Boolean = other is TrainTimeTable && way.sortedBy { it.stops[0].time } ==
+            other.way.sortedBy { it.stops[0].time }
 }
 
 /**
@@ -97,7 +147,14 @@ data class Time(val hour: Int, val minute: Int) : Comparable<Time> {
     /**
      * Сравнение времён на больше/меньше (согласно контракту compareTo)
      */
-    override fun compareTo(other: Time): Int = TODO()
+    override fun compareTo(other: Time): Int = when {
+        hour > other.hour -> 1
+        hour < other.hour -> -1
+        hour == other.hour && this.minute < other.minute -> -1
+        hour == other.hour && this.minute > other.minute -> 1
+        hour == other.hour && this.minute == other.minute -> 0
+        else -> throw IllegalArgumentException()
+    }
 }
 
 /**
