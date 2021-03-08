@@ -148,11 +148,9 @@ data class Time(val hour: Int, val minute: Int) : Comparable<Time> {
      * Сравнение времён на больше/меньше (согласно контракту compareTo)
      */
     override fun compareTo(other: Time): Int = when {
-        hour > other.hour -> 1
-        hour < other.hour -> -1
-        hour == other.hour && this.minute < other.minute -> -1
-        hour == other.hour && this.minute > other.minute -> 1
-        hour == other.hour && this.minute == other.minute -> 0
+        hour * 60 + minute < other.hour * 60 + other.minute -> -1
+        hour * 60 + minute > other.hour * 60 + other.minute -> 1
+        hour * 60 + minute == other.hour * 60 + other.minute -> 0
         else -> throw IllegalArgumentException()
     }
 }

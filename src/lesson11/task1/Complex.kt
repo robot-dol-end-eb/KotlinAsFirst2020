@@ -24,8 +24,8 @@ class Complex(val re: Double, val im: Double) {
      * Конструктор из строки вида x+yi
      */
     constructor(s: String) : this(
-        s.substring(0, s.indexOf(s.findLast { it == '+' || it == '-' }!!, 1)).toDouble(),
-        s.substring(s.indexOf(s.findLast { it == '+' || it == '-' }!!, 1))
+        s.substringBefore("+", s.substringBeforeLast("-")).toDouble(),
+        s.substringAfter("+", "-" + s.substringAfterLast("-"))
             .substringBefore('i').toDouble()
     )
 
